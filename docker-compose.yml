@@ -1,0 +1,16 @@
+version: "3.8"
+services: 
+    create-app:
+        image: node:12.19.0-slim
+        command: bash -c "npx create-react-app awesome-app && cd awesome-app && yarn build && cp -r ./build/* /app/build/"
+        volumes:
+            - ./src/build:/app/build
+    web:
+        image: nginx:1.19.3-alpine
+        volumes:
+            - ./src/build:/app/build
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf
+        ports:
+        - "8081:80"
+        depends_on: 
+            - create-app
